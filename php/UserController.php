@@ -27,7 +27,7 @@
             $get_users = $this -> pdo -> prepare("SELECT * FROM users ORDER BY Id DESC LIMIT ? OFFSET ?");
 
             if($get_users -> execute([$limit, $offset])) {
-                return $get_users();
+                return $get_users;
             }
         }
 
