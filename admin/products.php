@@ -61,7 +61,7 @@
             <div class="col-12 col-sm-6 col-lg-4">
                 <form class="mx-2 d-inline" action="<?php echo $direction;?>Admins/products" method="get">
                     <div class="input-group">
-                        <input type="search" name="search" class="form-control mr-sm-2" value="<?php echo $search;?>" placeholder="Buscar una marca">
+                        <input type="search" name="search" class="form-control mr-sm-2" value="<?php echo $search;?>" placeholder="Buscar un producto">
                         <button class="btn btn-primary" type="submit">
                             <i class="fa fa-search"></i>
                         </button>
