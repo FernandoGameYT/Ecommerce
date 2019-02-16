@@ -1,0 +1,17 @@
+RewriteEngine On
+
+RewriteRule ^Brands/([a-zA-Z0-9]+)/?$ brands.php?brand=$1
+
+RewriteRule ^Products/(.*)-([0-9]+)/?$ products.php?name=$1&id=$2
+
+RewriteRule ^Products/([a-zA-Z0-9]+)/?$ products.php?type=$1
+
+RewriteRule ^Products/?$ products.php
+
+RewriteRule ^Users/([a-zA-Z0-9]+)/?$ user/$1.php
+
+RewriteRule ^Admins/?$ admin/products.php
+
+RewriteRule ^Admins/([a-zA-Z0-9]+)/?$ admin/$1.php
+
+RewriteRule ^([a-zA-Z0-9]+)/?$ $1.php
