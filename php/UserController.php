@@ -21,12 +21,13 @@
         /**
          * @param int $limit
          * @param int $offset
+         * @param int $permits
          */
 
-        public function getAllUsers($limit = 20, $offset = 0) {
-            $get_users = $this -> pdo -> prepare("SELECT * FROM users ORDER BY Id DESC LIMIT ? OFFSET ?");
+        public function getAllUsers($permits = 2, $limit = 20, $offset = 0) {
+            $get_users = $this -> pdo -> prepare("SELECT * FROM users WHERE Permits <= ? ORDER BY Id DESC LIMIT ? OFFSET ?");
 
-            if($get_users -> execute([$limit, $offset])) {
+            if($get_users -> execute([$permits, $limit, $offset])) {
                 return $get_users;
             }
         }
