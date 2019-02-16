@@ -44,7 +44,9 @@
 
         if(isset($_GET["search"])) {
             $search = $_GET["search"];
-            $all_products = $products -> getProductsBySearch($search);
+            $products -> search = $search;
+            
+            $all_products = $products -> getProductsBySearch();
         }else{
             $search = "";
             $all_products = $products -> getAllRecentProducts();
