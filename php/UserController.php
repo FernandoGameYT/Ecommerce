@@ -108,6 +108,52 @@
         }
 
         /**
+         * @param string $username
+         * @param string $email
+         * @param string $password
+         * @param int $permits
+         * 
+         * @return string
+         */
+
+        public function addUserByAdmin($username, $email, $password, $permits) {
+            $direction = $GLOBALS["direction"];
+            if(strlen($username) < 4 || strlen($username) > 20) {
+                $msg = "El nombre de usuario debe tener 4 o mas caracteres.";
+                return $msg;
+            }else if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $msg = "El correo electronico no es valido.";
+                return $msg;
+            }else if(strlen($password) < 6 || strlen($password) > 50) {
+                $msg = "La contraseña debe tener 6 o mas caracteres.";
+                return $msg;
+            }
+
+            $check_user = $this -> pdo -> prepare("SELECT Username, Email FROM users WHERE Username = ? OR Email = ?");
+
+            if($check_user -> execute([$username, $email])) {
+                $user = $check_user -> fetch();
+
+                if($username == $user["Username"]) {
+                    $msg = "El nombre de usuario ya existe.";
+                    return $msg;
+                }else if($email == $user["Email"]){
+                    $msg = "El correo electronico ya existe.";
+                    return $msg;
+                }
+            }
+
+            $new_user = $this -> pdo -> prepare("INSERT INTO users (Id, Username, Email, Password, ActivationCode, Activation, Permits) VALUES (NULL, ?, ?, ?, ?, ?)");
+            $activationCode = md5($email.time());
+            $password = password_hash($password, PASSWORD_ARGON2I);
+
+            if($new_user -> execute([$username, $email, $password, $activationCode, 1, $permits])) {
+                $msg = "Usuario agregado con exito.";
+                return $msg;
+            }
+        }
+
+        /**
          * @param string $activationCode
          * 
          * @return array

@@ -33,29 +33,27 @@
         include("../php/navbar.php");
 
         // Menu
-        $brand_status = "active";
+        $user_status = "active";
         include("menu.php");
-
-        $brands = new Brands();
 
         if(isset($_GET["search"])) {
             $search = $_GET["search"];
-            $all_brands = $brands -> getBrandsBySearch($search);
+            $all_users = $brands -> getBrandsBySearch($search);
         }else{
             $search = "";
-            $all_brands = $users;
+            $all_users = $users -> getAllUsers($users -> data["Permits"] - 1);
         }
     ?>
 
     <div class="container-fluid mt-5">
         <div class="row mb-3">
-            <div class="col-12 col-sm-6 col-md-6 col-lg-6 offset-xl-3 col-xl-3 mt-4">
-                <span class="title h3">Administrador de marcas</span>
+            <div class="col-12 col-sm-6 col-md-6 col-lg-6 offset-xl-1 col-xl-5 mt-4">
+                <span class="title h3">Administrador de usuarios</span>
             </div>
-            <div class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                <form class="mx-2 d-inline" action="<?php echo $direction;?>Admins/brands" method="get">
+            <div class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-5">
+                <form class="mx-2 d-inline" action="<?php echo $direction;?>Admins/users/" method="get">
                     <div class="input-group">
-                        <input type="search" name="search" class="form-control mr-sm-2" value="<?php echo $search;?>" placeholder="Buscar una marca">
+                        <input type="search" name="search" class="form-control mr-sm-2" value="<?php echo $search;?>" placeholder="Buscar un usuario">
                         <button class="btn btn-primary" type="submit">
                             <i class="fa fa-search"></i>
                         </button>
@@ -65,22 +63,40 @@
         </div>
         <?php
             
-            foreach($all_brands as $brand) {
+            foreach($all_users as $user) {
+                if($user["Permits"] == 3) {
+                    $permits = "Desarrollador";
+                }
+                elseif($user["Permits"] == 2) {
+                    $permits = "Super Administrador";
+                }elseif($user["Permits"] == 1) {
+                    $permits = "Administrador";
+                }else{
+                    $permits = "Ningún Permiso";
+                }
                 echo '
                 <div class="row mb-5 align-items-center justify-content-center">
                     <div class="col-3 col-sm-4 col-md-3 col-lg-2 col-xl-2 text-center">
                         <h4 class="title">Id</h4>
-                        <span class="h5">'.$brand["Id"].'</span>
+                        <span class="h5">'.$user["Id"].'</span>
                     </div>
                     <div class="col-6 col-sm-5 col-md-4 col-lg-3 col-xl-2 text-center">
-                        <h4 class="title">Nombre</h4>
-                        <span class="h5">'.$brand["Name"].'</span>
+                        <h4 class="title">Username</h4>
+                        <span class="h5">'.$user["Username"].'</span>
+                    </div>
+                    <div class="col-6 col-sm-5 col-md-4 col-lg-3 col-xl-2 text-center">
+                        <h4 class="title">Email</h4>
+                        <span class="h5">'.$user["Email"].'</span>
+                    </div>
+                    <div class="col-6 col-sm-5 col-md-4 col-lg-3 col-xl-2 text-center">
+                        <h4 class="title">Permisos</h4>
+                        <span class="h5">'.$permits.'</span>
                     </div>
                     <div class="col-3 col-sm-3 col-md-2 col-lg-2 col-xl-2 text-sm-right">
-                        <button class="btn btn-danger mr-2" onclick="deleteBrand('.$brand["Id"].',\''.$brand["Name"].'\')">
+                        <button class="btn btn-danger mr-2" onclick="deleteUser('.$user["Id"].',\''.$user["Username"].'\')">
                             <span class="fa fa-times"></span>
                         </button>
-                        <button class="btn btn-primary" onclick="showEditBrand('.$brand["Id"].',\''.$brand["Name"].'\')">
+                        <button class="btn btn-primary" onclick="showEditUser('.$user["Id"].',\''.$user["Username"].'\',\''.$user["Email"].'\','.$user["Permits"].')">
                             <span class="fa fa-pencil"></span>
                         </button>
                     </div>
@@ -90,51 +106,111 @@
 
         ?>
         <div class="row justify-content-center">
-            <div class="col-12 col-md-9 col-lg-7 col-xl-6">
-                <button class="btn btn-primary button-add" id="add-brand-show">
+            <div class="col-12 col-md-9 col-lg-7 col-xl-10">
+                <button class="btn btn-primary button-add p-3" id="add-user-show">
                     <span class="fa fa-plus"></span>
-                    Agregar marca
+                    Agregar usuario
                 </button>
             </div>
         </div>
     </div>
 
-    <div class="form-screen-container"  id="add-brand">
-        <form action="../php/panelSystem.php" class="form-group" method="post" id="add-brand-form">
-            <button type="button" class="close" id="add-brand-hide">
+    <div class="form-screen-container"  id="add-user">
+        <form action="../php/panelSystem.php" class="form-group" method="post" id="add-user-form">
+            <button type="button" class="close" id="add-user-hide">
                 <span class="fa fa-times"></span>
             </button>
             <h2>
-                Agregar una marca
+                Agregar un usuario
             </h2>
-            <input type="hidden" name="addBrand">
+            <input type="hidden" name="addUser">
             <div class="input-group">
-                <input type="text" name="name" id="add-brand-name" maxlength="50" required>
-                <label for="add-brand-name">Nombre</label>
+                <input type="text" name="username" id="add-user-username" maxlength="20" required>
+                <label for="add-user-username">Username</label>
+            </div>
+            <div class="input-group">
+                <input type="text" name="email" id="add-user-email" maxlength="100" required>
+                <label for="add-user-email">Correo electronico</label>
+            </div>
+            <div class="input-group">
+                <input type="password" name="password" id="add-user-password" maxlength="200" required>
+                <label for="add-user-password">Contraseña</label>
+            </div>
+            <div class="input-group">
+                <input type="password" name="repeat-password" id="add-user-repeat-password" maxlength="200" required>
+                <label for="add-user-repeat-password">Repite la contraseña</label>
+            </div>
+            <div class="input-group">
+                <select name="permits" id="edit-user-permits" class="w-100 p-3">
+                <option value="0" selected>Ningún Permiso</option>
+                    <?php
+                    
+                        if($users -> data["Permits"] >= 2) {
+                            echo "<option value='1'>Administrador</option>";
+                        }
+
+                        if($users -> data["Permits"] == 3) {
+                            echo "<option value='2'>Super Administrador</option>";
+                        }
+                    
+                    ?>
+                </select>
             </div>
 
-            <button class="submit" type="submit">Agregar Marca</button>
+            <button class="submit" type="submit">Agregar usuario</button>
         </form>
     </div>
 
-    <div class="form-screen-container"  id="edit-brand">
-            <form action="../php/panelSystem.php" class="form-group" method="post" id="edit-brand-form">
-                <button type="button" class="close" id="edit-brand-hide">
+    <div class="form-screen-container"  id="edit-user">
+            <form action="../php/panelSystem.php" class="form-group" method="post" id="edit-user-form">
+                <button type="button" class="close" id="edit-user-hide">
                     <span class="fa fa-times"></span>
                 </button>
                 <h2>
-                    Editar una marca
+                    Editar un usuario
                 </h2>
 
-                <input type="hidden" name="editBrand">
-                <input type="hidden" name="id" id="edit-brand-id">
+                <input type="hidden" name="editUser">
+                <input type="hidden" name="id" id="edit-user-id">
+
+                <span class="text-info">
+                    <b>Nota:</b> si dejas los campos de las contraseñas vacios no se le aplicaran cambios.
+                </span>
 
                 <div class="input-group">
-                    <input type="text" name="name" id="edit-brand-name" maxlength="50" required>
-                    <label for="edit-brand-name">Nombre</label>
+                    <input type="text" name="username" id="edit-user-username" maxlength="20" required>
+                    <label for="edit-user-username">Username</label>
+                </div>
+                <div class="input-group">
+                    <input type="text" name="email" id="edit-user-email" maxlength="100" required>
+                    <label for="edit-user-email">Correo electronico</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="password" id="edit-user-password" maxlength="200">
+                    <label for="edit-user-password">Nueva contraseña</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="repeat-password" id="edit-user-repeat-password" maxlength="200">
+                    <label for="edit-user-repeat-password">Repite la contraseña</label>
+                </div>
+                <div class="input-group">
+                    <select name="permits" id="edit-user-permits" class="w-100 p-3">
+                    <option value="0">Ningún Permiso</option>
+                        <?php
+                        
+                            if($users -> data["Permits"] >= 2) {
+                                echo "<option value='1'>Administrador</option>";
+                            }
+
+                            if($users -> data["Permits"] == 3) {
+                                echo "<option value='2'>Super Administrador</option>";
+                            }
+                        
+                        ?>
+                    </select>
                 </div>
     
-                <button class="submit" type="submit">Editar Marca</button>
+                <button class="submit" type="submit">Editar Usuario</button>
             </form>
         </div>
 
@@ -146,29 +222,31 @@
     <script src="../js/bootstrap.min.js"></script>
     <script>
         //show add brand form
-        $("#add-brand-show").click(() => {
-            $("#add-brand").addClass("active");
+        $("#add-user-show").click(() => {
+            $("#add-user").addClass("active");
         });
 
-        //hide add brand form
-        $("#add-brand-hide").click(() => {
-            $("#add-brand").removeClass("active");
+        //hide add user form
+        $("#add-user-hide").click(() => {
+            $("#add-user").removeClass("active");
         });
 
         //show edit brand form
-        function showEditBrand(id, name) {
-            $("#edit-brand").addClass("active");
-            $("#edit-brand-name").val(name);
-            $("#edit-brand-id").val(id);
+        function showEditUser(id, username, email, permits) {
+            $("#edit-user").addClass("active");
+            $("#edit-user-id").val(id);
+            $("#edit-user-username").val(username);
+            $("#edit-user-email").val(email);
+            $("#edit-user-permits").val(permits);
         }
 
         //hide edit brand form
-        $("#edit-brand-hide").click(() => {
-            $("#edit-brand").removeClass("active");
+        $("#edit-user-hide").click(() => {
+            $("#edit-user").removeClass("active");
         });
 
         //delete brand
-        function deleteBrand(id, name) {
+        function deleteUser(id, name) {
             if(confirm(`¿Desea eliminar la marca ${name}?`)) {
                 $.ajax({
                     url: "../php/panelSystem.php",
