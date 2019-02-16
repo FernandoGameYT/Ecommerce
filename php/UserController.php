@@ -19,6 +19,19 @@
         }
 
         /**
+         * @param int $limit
+         * @param int $offset
+         */
+
+        public function getAllUsers($limit = 20, $offset = 0) {
+            $get_users = $this -> pdo -> prepare("SELECT * FROM users ORDER BY Id DESC LIMIT ? OFFSET ?");
+
+            if($get_users -> execute([$limit, $offset])) {
+                return $get_users();
+            }
+        }
+
+        /**
          * @param string $username
          * @param string $email
          * @param string $password
