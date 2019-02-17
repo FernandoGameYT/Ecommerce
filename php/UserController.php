@@ -33,6 +33,20 @@
         }
 
         /**
+         * @param string $search
+         * @param int $limit
+         * @param int $offset
+         */
+
+        public function getUsersBySearch($search, $limit = 20, $offset = 0) {
+            $get_users = $this -> pdo -> prepare("SELECT * FROM users WHERE Username LIKE ? LIMIT ? OFFSET ?");
+
+            if($get_users -> execute(["%".$search."%", $limit, $offset])) {
+                return $get_users;
+            }
+        }
+
+        /**
          * @param string $username
          * @param string $email
          * @param string $password

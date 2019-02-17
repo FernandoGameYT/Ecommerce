@@ -38,7 +38,7 @@
 
         if(isset($_GET["search"])) {
             $search = $_GET["search"];
-            $all_users = $brands -> getBrandsBySearch($search);
+            $all_users = $users -> getUsersBySearch($search);
         }else{
             $search = "";
             $all_users = $users -> getAllUsers($users -> data["Permits"] - 1);
