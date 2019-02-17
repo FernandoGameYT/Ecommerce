@@ -83,4 +83,33 @@
         exit;
     }
 
+    //Users
+
+    else if(isset($_POST["addUser"])) {
+        $username = filter_var($_POST["username"], FILTER_SANITIZE_STRING);
+        $email = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
+        $password = filter_var($_POST["password"], FILTER_SANITIZE_STRING);
+        $permits = filter_var($_POST["permits"], FILTER_SANITIZE_NUMBER_INT);
+
+        $msg = $users -> addUserByAdmin($username, $email, $password, $permits);
+        header("Location: ".$direction."Admins/users?msg=$msg");
+        exit;
+    }else if(isset($_POST["editUser"])) {
+        $id = filter_var($_POST["id"], FILTER_SANITIZE_NUMBER_INT);
+        $username = filter_var($_POST["username"], FILTER_SANITIZE_STRING);
+        $email = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
+        $password = filter_var($_POST["password"], FILTER_SANITIZE_STRING);
+        $permits = filter_var($_POST["permits"], FILTER_SANITIZE_NUMBER_INT);
+
+        $msg = $users -> updateUser($id, $username, $email, $password, $permits);
+        header("Location: ".$direction."Admins/users?msg=$msg");
+        exit; 
+    }else if(isset($_POST["deleteUser"])) {
+        $id = filter_var($_POST["id"], FILTER_SANITIZE_NUMBER_INT);
+
+        $msg = $users -> deleteUser($id);
+        echo $msg;
+        exit;
+    }
+
 ?>

@@ -43,6 +43,28 @@
             $search = "";
             $all_users = $users -> getAllUsers($users -> data["Permits"] - 1);
         }
+
+        if(isset($_GET["msg"])) {
+            echo '
+            <div class="modal fade" id="msg" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLongTitle">Estado de la accion</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            '.$_GET["msg"].'
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>';
+        }
     ?>
 
     <div class="container-fluid mt-5">
@@ -125,24 +147,24 @@
             </h2>
             <input type="hidden" name="addUser">
             <div class="input-group">
-                <input type="text" name="username" id="add-user-username" maxlength="20" required>
+                <input type="text" name="username" id="add-user-username" minlength="4" maxlength="20" required>
                 <label for="add-user-username">Username</label>
             </div>
             <div class="input-group">
-                <input type="text" name="email" id="add-user-email" maxlength="100" required>
+                <input type="email" name="email" id="add-user-email" maxlength="100" required>
                 <label for="add-user-email">Correo electronico</label>
             </div>
             <div class="input-group">
-                <input type="password" name="password" id="add-user-password" maxlength="200" required>
+                <input type="password" name="password" id="add-user-password" minlength="6" maxlength="200" required>
                 <label for="add-user-password">Contraseña</label>
             </div>
             <div class="input-group">
-                <input type="password" name="repeat-password" id="add-user-repeat-password" maxlength="200" required>
+                <input type="password" name="repeat-password" id="add-user-repeat-password" minlength="6" maxlength="200" required>
                 <label for="add-user-repeat-password">Repite la contraseña</label>
             </div>
             <div class="input-group">
-                <select name="permits" id="edit-user-permits" class="w-100 p-3">
-                <option value="0" selected>Ningún Permiso</option>
+                <select name="permits" id="add-user-permits" class="w-100 p-3">
+                <option value="0">Ningún Permiso</option>
                     <?php
                     
                         if($users -> data["Permits"] >= 2) {
@@ -182,7 +204,7 @@
                     <label for="edit-user-username">Username</label>
                 </div>
                 <div class="input-group">
-                    <input type="text" name="email" id="edit-user-email" maxlength="100" required>
+                    <input type="email" name="email" id="edit-user-email" maxlength="100" required>
                     <label for="edit-user-email">Correo electronico</label>
                 </div>
                 <div class="input-group">
@@ -221,6 +243,9 @@
     <script src="../js/jquery.min.js"></script>
     <script src="../js/bootstrap.min.js"></script>
     <script>
+        $("#msg").modal({
+            show: true
+        });
         //show add brand form
         $("#add-user-show").click(() => {
             $("#add-user").addClass("active");
@@ -246,14 +271,14 @@
         });
 
         //delete brand
-        function deleteUser(id, name) {
-            if(confirm(`¿Desea eliminar la marca ${name}?`)) {
+        function deleteUser(id, username) {
+            if(confirm(`¿Desea eliminar el usuario ${username}?`)) {
                 $.ajax({
                     url: "../php/panelSystem.php",
                     method: "post",
-                    data: "deleteBrand&id=" + id,
-                    success: () => {
-                        location.reload();
+                    data: "deleteUser&id=" + id,
+                    success: data => {
+                        location.href = "users?msg=" + data;
                     },
                 });
             }

@@ -143,7 +143,7 @@
                 }
             }
 
-            $new_user = $this -> pdo -> prepare("INSERT INTO users (Id, Username, Email, Password, ActivationCode, Activation, Permits) VALUES (NULL, ?, ?, ?, ?, ?)");
+            $new_user = $this -> pdo -> prepare("INSERT INTO users (Id, Username, Email, Password, ActivationCode, Activation, Permits) VALUES (NULL, ?, ?, ?, ?, ?, ?)");
             $activationCode = md5($email.time());
             $password = password_hash($password, PASSWORD_ARGON2I);
 
@@ -427,14 +427,23 @@
          */
 
         public function updateUser($id, $username, $email, $password, $permits) {
+            $get_user = $this -> pdo -> prepare("SELECT Username, Email FROM users WHERE Id = ?");
+
+            if($get_user -> execute([$id])) {
+                $old_user = $get_user -> fetch();
+            }
+
             if(strlen($username) < 4 || strlen($username) > 20) {
                 $msg = "El nombre de usuario debe tener 4 o mas caracteres.";
                 return $msg;
             }else if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $msg = "El correo electronico no es valido.";
                 return $msg;
-            }else if(strlen($password) > 0 && strlen($password) < 6 || strlen($password) > 0 && strlen($password) > 50) {
+            }else if(strlen($password) > 0 && strlen($password) < 6 || strlen($password) > 50) {
                 $msg = "La contraseña debe tener 6 o mas caracteres.";
+                return $msg;
+            }else if($permits >= $this -> data["Permits"]) {
+                $msg = "A ocurrido un error en el servidor.";
                 return $msg;
             }
 
@@ -443,10 +452,10 @@
             if($check_user -> execute([$username, $email])) {
                 $user = $check_user -> fetch();
 
-                if($username == $user["Username"]) {
+                if($username != $old_user["Username"] && $username == $user["Username"]) {
                     $msg = "El nombre de usuario ya existe.";
                     return $msg;
-                }else if($email == $user["Email"]){
+                }else if($email != $old_user["Email"] && $email == $user["Email"]){
                     $msg = "El correo electronico ya existe.";
                     return $msg;
                 }
@@ -454,7 +463,7 @@
 
             $password = password_hash($password, PASSWORD_ARGON2I);
 
-            $update_user = $this -> pdo -> preapre("UPDATE users SET Username = ?, Email = ?, Password = ?, Permits = ? WHERE Id = ?");
+            $update_user = $this -> pdo -> prepare("UPDATE users SET Username = ?, Email = ?, Password = ?, Permits = ? WHERE Id = ?");
 
             if($update_user -> execute([$username, $email, $password, $permits, $id])) {
                 $msg = "El usuario se a actualizado con exito.";
