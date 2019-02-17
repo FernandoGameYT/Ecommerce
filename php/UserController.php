@@ -461,6 +461,20 @@
                 return $msg;
             }
         }
+
+        /**
+         * @param int $id
+         * 
+         * @return string
+         */
+
+        public function deleteUser($id) {
+            $delete_user = $this -> pdo -> prepare("DELETE FROM users WHERE Id = ?");
+
+            if($delete_user -> execute([$id])) {
+                return "El usuario se a eliminado con exito.";
+            }
+        }
     }
 
 ?>
