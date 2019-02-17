@@ -433,7 +433,7 @@
             }else if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $msg = "El correo electronico no es valido.";
                 return $msg;
-            }else if(strlen($password) < 6 || strlen($password) > 50) {
+            }else if(strlen($password) > 0 && strlen($password) < 6 || strlen($password) > 0 && strlen($password) > 50) {
                 $msg = "La contraseña debe tener 6 o mas caracteres.";
                 return $msg;
             }
