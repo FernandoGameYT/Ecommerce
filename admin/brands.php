@@ -21,7 +21,7 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>PhoneShop - Administrar Productos</title>
+    <title>PhoneShop - Administrar Marcas</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <base href="<?php echo $direction . "Admins/";?>">
     <link rel="stylesheet" href="../css/icon.css">
