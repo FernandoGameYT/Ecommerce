@@ -84,6 +84,26 @@
             }
         }
 
+        public function getAllRecentOrders($limit = 20, $offset = 0) {
+            $orders = $this -> pdo -> prepare("SELECT * FROM orders ORDER BY Id DESC LIMIT ? OFFSET ?");
+
+            if($orders -> execute([$limit, $offset])) {
+                return $orders;
+            }
+        }
+
+        /**
+         * @param int $id
+         */
+
+        public function getOrderById($id) {
+            $orders = $this -> pdo -> prepare("SELECT * FROM orders WHERE Id = ?");
+
+            if($orders -> execute([$id])) {
+                return $orders;
+            }
+        }
+
         /**
          * @return array
          */
@@ -102,6 +122,37 @@
                     $items[] = $product;
                 }
                 return $items;
+            }
+        }
+
+        /**
+         * @param int $id
+         * @param float $subtotal
+         * @param float $shipping
+         * @param string $date
+         * 
+         * @return bool
+         */
+
+        public function updateOrder($id, $subtotal, $shipping, $date) {
+            $update_order = $this -> pdo -> prepare("UPDATE orders SET Subtotal = ?, Shipping = ?, Date = ? WHERE Id = ?");
+
+            if($update_order -> execute([$subtotal, $shipping, $date, $id])) {
+                return true;
+            }
+        }
+
+        /**
+         * @param int $id
+         * 
+         * @return bool
+         */
+
+        public function deleteOrder($id) {
+            $delete_order = $this -> pdo -> prepare("DELETE FROM orders WHERE Id = ?");
+
+            if($delete_order -> execute([$id])) {
+                return true;
             }
         }
     }

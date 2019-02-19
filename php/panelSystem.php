@@ -3,6 +3,7 @@
     include("UserController.php");
     include("BrandsController.php");
     include("ProductController.php");
+    include("OrderController.php");
 
     $users = new Users();
 
@@ -18,6 +19,7 @@
 
     $brands = new Brands();
     $products = new Products();
+    $orders = new Orders();
 
     //Brands
     if(isset($_POST["addBrand"])) {
@@ -110,6 +112,25 @@
         $msg = $users -> deleteUser($id);
         echo $msg;
         exit;
+    }
+
+    //Orders
+
+    else if(isset($_POST["editOrder"])) {
+        $id = filter_var($_POST["id"], FILTER_SANITIZE_NUMBER_INT);
+        $subtotal = filter_var($_POST["subtotal"], FILTER_SANITIZE_NUMBER_FLOAT);
+        $shipping = filter_var($_POST["shipping"], FILTER_SANITIZE_NUMBER_FLOAT);
+        $date = filter_var($_POST["date"], FILTER_SANITIZE_STRING);
+
+        $orders -> updateOrder($id, $subtotal, $shipping, $date);
+        header("Location: ".$direction."Admins/orders/");
+        exit; 
+    }else if(isset($_POST["deleteOrder"])) {
+        $id = filter_var($_POST["id"], FILTER_SANITIZE_NUMBER_INT);
+
+        $orders -> deleteOrder($id);
+        header("Location: ".$direction."Admins/orders/");
+        exit; 
     }
 
 ?>

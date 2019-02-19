@@ -12,6 +12,10 @@
         $user_status = "";
     }
 
+    if(!isset($order_status)) {
+        $order_status = "";
+    }
+
 ?>
 <div class="container-fluid">
     <div class="row justify-content-center">
@@ -24,6 +28,9 @@
             </a>
             <a href="<?php echo $direction;?>Admins/users/">
                 <span class="menu-item <?php echo $user_status;?>">Administrar Usuarios</span>
+            </a>
+            <a href="<?php echo $direction;?>Admins/orders/">
+                <span class="menu-item <?php echo $order_status;?>">Administrar Pedidos</span>
             </a>
         </div>
     </div>
