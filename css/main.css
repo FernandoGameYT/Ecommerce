@@ -463,8 +463,6 @@ footer .footer-copyright {
 .form-screen-container {
     position: fixed;
     display: none;
-    justify-content: center;
-    align-items: center;
     overflow-y: scroll;
     z-index: 100;
     top: 0;
@@ -474,11 +472,13 @@ footer .footer-copyright {
 }
 
 .form-screen-container.active {
-    display: flex;
+    display: block;
 }
 
 .form-screen-container form {
     position: relative;
+    display: block;
+    margin: 50px auto;
     width: 100%;
     max-width: 500px;
     text-align: center;
