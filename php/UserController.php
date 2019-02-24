@@ -216,7 +216,7 @@
 
         public function hasUser($username, $password) {
             $cookie_direction = $GLOBALS["cookie_direction"];
-            $user = $this -> pdo -> prepare("SELECT Password, Activation FROM users WHERE Username = ?");
+            $user = $this -> pdo -> prepare("SELECT Password, Activation FROM users WHERE Username = ? AND OAuthProvider = 'none'");
 
             if($user -> execute([$username])) {
                 if($user -> rowCount() > 0) {
@@ -258,6 +258,80 @@
                         "msg" => "El nombre de usuario no existe."
                     );
                     return json_encode($msg);
+                }
+            }
+        }
+
+        /**
+         * @param string $username
+         * 
+         * @return bool
+         */
+
+        public function hasUsername($username) {
+            $check_username = $this -> pdo -> prepare("SELECT * FROM users WHERE Username = ?");
+
+            if($check_username -> execute([$username])) {
+                if($check_username -> rowCount() > 0) {
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+        }
+
+        /**
+         * @param string $username
+         * 
+         * @return bool
+         */
+
+        public function hasEmail($email) {
+            $check_email = $this -> pdo -> prepare("SELECT * FROM users WHERE Email = ?");
+
+            if($check_email -> execute([$email])) {
+                if($check_email -> rowCount() > 0) {
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+        }
+
+        /**
+         * @param array $userData
+         * 
+         * @return bool
+         */
+
+        public function checkUser($userData = []) {
+            if(!empty($userData)) {
+                $check_user = $this -> pdo -> prepare("SELECT * FROM users WHERE OAuthProvider = ? AND OAuthId = ?");
+
+                if($check_user -> execute([$userData["OAuthProvider"], $userData["OAuthId"]])) {
+                    if($check_user -> rowCount() > 0) {
+                        $sessionId = md5($userData["OAuthId"] . time());
+                        $set_sessionId = $this -> pdo -> prepare("UPDATE users SET SessionId = ? WHERE OAuthId = ?");
+
+                        if($set_sessionId -> execute([$sessionId, $userData["OAuthId"]])) {
+                            $_SESSION["SessionId"] = $sessionId;
+                            setcookie("SessionId", $sessionId, time() + 3600 * 24 * 30, "/", $cookie_direction);
+                            return true;
+                        }
+                    }else{
+                        if(!isset($userData["Username"]) || !isset($userData["Email"])) {
+                            return false;
+                        }
+                        $cookie_direction = $GLOBALS["cookie_direction"];
+                        $insert_user = $this -> pdo -> prepare("INSERT INTO users (Id, Username, Email, Activation, SessionId, OAuthProvider, OAuthId) VALUES (NULL, ?, ?, 1, ?, ?, ?)");
+                        $sessionId = md5($userData["Username"] . time());
+
+                        if($insert_user -> execute([$userData["Username"], $userData["Email"], $sessionId, $userData["OAuthProvider"], $userData["OAuthId"]])) {
+                            $_SESSION["SessionId"] = $sessionId;
+                            setcookie("SessionId", $sessionId, time() + 3600 * 24 * 30, "/", $cookie_direction);
+                            return true;
+                        }
+                    }
                 }
             }
         }

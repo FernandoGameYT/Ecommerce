@@ -10,7 +10,7 @@ RewriteRule ^Products/?$ products.php
 
 RewriteRule ^Users/([a-zA-Z0-9]+)/?$ user/$1.php
 
-RewriteRule ^Admins/?$ admin/products.php
+RewriteRule ^Admins/?$ admin/brands.php
 
 RewriteRule ^Admins/([a-zA-Z0-9]+)/?$ admin/$1.php
 

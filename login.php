@@ -2,7 +2,11 @@
 
     session_start();
     include("php/conexion.php");
+    require "php/fb_init.php";
 
+    $helper = $fb -> getRedirectLogInHelper();
+    $permissions = ["email"];
+    $loginUrl = $helper->getLoginUrl($direction."php/fb_callback.php", $permissions);
 ?>
 <!DOCTYPE html>
 <html>
@@ -65,6 +69,12 @@
         </div>
 
         <button type="submit">Iniciar Sesion</button>
+
+        <p class="mt-3">
+            <a href="<?php echo htmlspecialchars($loginUrl);?>">
+                Iniciar sesion con facebook
+            </a>
+        </p>
 
         <p class="mt-3">
             <a href="javascript:void(0)" onclick="changeForm()">
